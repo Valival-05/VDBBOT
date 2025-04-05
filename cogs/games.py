@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands
 import random
+import asyncio
 
 class Games(commands.Cog):
     def __init__(self, bot):
@@ -37,13 +38,4 @@ class Games(commands.Cog):
 
             except ValueError:
                 await ctx.send("Ce n'est pas un nombre valide. Essaie encore.")
-            except asyncio.TimeoutError:
-                await ctx.send(f"Tu as mis trop de temps ! Le nombre était {number_to_guess}.")
-                return
-        
-        await ctx.send(f"Tu as épuisé toutes tes tentatives. Le nombre était {number_to_guess}.")
-
-# Ajoute le Cog au bot
-def setup(bot):
-    bot.add_cog(Games(bot))
-
+            except asyncio
