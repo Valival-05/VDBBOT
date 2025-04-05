@@ -83,7 +83,7 @@ class Moderation(commands.Cog):
     @app_commands.checks.has_permissions(administrator=True)
     async def moderate(self, interaction: discord.Interaction, member: discord.Member):
         embed = discord.Embed(
-            title="Options de modération",
+            title="Options d'administration",
             description=f"Que veux-tu faire avec {member.mention} ?",
             color=discord.Color.red()
         )
