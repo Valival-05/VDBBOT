@@ -12,6 +12,9 @@ class MonBot(commands.Bot):
         # Charge les extensions (cogs)
         for extension in ['games', 'moderation']:
             await self.load_extension(f'cogs.{extension}')
+        
+        # Synchronisation des commandes slash après avoir chargé les cogs
+        await self.tree.sync()
 
 # Création du bot avec les intents
 intents = discord.Intents.all()
