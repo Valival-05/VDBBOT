@@ -16,11 +16,42 @@ class MonBot(commands.Bot):
         # Synchronisation des commandes slash après avoir chargé les cogs
         await self.tree.sync()
 
-# Création du bot avec les intents
-intents = discord.Intents.all()
-bot = MonBot(command_prefix='!', intents=intents)
+    async def on_ready(self):
+        print(f'Bot connecté en tant que {self.user}')
 
+# Création du bot avec les intents et sans la commande d'aide par défaut
+intents = discord.Intents.all()
+bot = MonBot(command_prefix='!', intents=intents, help_command=None)
+
+# Suppression de la commande d'aide par défaut
 bot.remove_command('help')
+
+@bot.command()
+async def help(ctx):
+    """Affiche la liste des commandes disponibles"""
+    embed = discord.Embed(
+        title="Commandes Disponibles",
+        description="Voici la liste des commandes que je peux exécuter :",
+        color=discord.Color.blue()
+    )
+
+    # Liste des commandes et de leurs descriptions
+    commands_list = {
+        'help': 'Affiche ce message d\'aide.',
+        'ping': 'Vérifie la latence du bot.',
+        'game': 'Lance un jeu de devinette de nombre.',
+        'kick': 'Expulse un membre du serveur.',
+        # Ajoute ici les autres commandes et leurs descriptions
+    }
+
+    for command_name, command_desc in commands_list.items():
+        embed.add_field(
+            name=f'!{command_name}',
+            value=command_desc,
+            inline=False
+        )
+
+    await ctx.send(embed=embed)
 
 # Garde le bot en ligne
 keep_alive()
