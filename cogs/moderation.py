@@ -27,17 +27,17 @@ class ModerationView(discord.ui.View):
 
     @discord.ui.button(label="Mute", style=discord.ButtonStyle.secondary)
     async def mute_button(self, interaction: discord.Interaction, button: discord.ui.Button):
-        await interaction.response.send_message("La fonction mute n'est pas encore implémentée.", ephemeral=True)
+        await interaction.response.send_message("🔇 Mute non implémenté pour le moment.", ephemeral=True)
 
     @discord.ui.button(label="Annuler", style=discord.ButtonStyle.grey)
     async def cancel_button(self, interaction: discord.Interaction, button: discord.ui.Button):
-        await interaction.response.edit_message(content="Action annulée.", view=None)
+        await interaction.response.edit_message(content="❌ Action annulée.", view=None)
 
 class Moderation(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    # ✅ Slash command /moderate
+    # ✅ Commande slash /moderate
     @app_commands.command(name="moderate", description="Afficher les options de modération pour un membre.")
     @app_commands.checks.has_permissions(administrator=True)
     async def moderate(self, interaction: discord.Interaction, member: discord.Member):
@@ -52,14 +52,14 @@ class Moderation(commands.Cog):
     @moderate.error
     async def moderate_error(self, interaction: discord.Interaction, error):
         if isinstance(error, app_commands.errors.MissingPermissions):
-            await interaction.response.send_message("Tu dois être administrateur pour utiliser cette commande.", ephemeral=True)
+            await interaction.response.send_message("❌ Tu dois être administrateur pour utiliser cette commande.", ephemeral=True)
 
-    # ✅ Commande !sync (admin only) pour forcer la sync des slash commands
+    # ✅ Commande !sync (admin only) – synchro instantanée sur le serveur actuel
     @commands.command(name="sync")
     @commands.has_permissions(administrator=True)
     async def sync_commands(self, ctx):
-        synced = await self.bot.tree.sync()
-        await ctx.send(f"✅ {len(synced)} commandes slash synchronisées !")
+        synced = await self.bot.tree.sync(guild=ctx.guild)
+        await ctx.send(f"✅ Commandes slash synchronisées pour **{ctx.guild.name}** : {len(synced)} commandes.")
 
 async def setup(bot):
     await bot.add_cog(Moderation(bot))
