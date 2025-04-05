@@ -38,4 +38,12 @@ class Games(commands.Cog):
 
             except ValueError:
                 await ctx.send("Ce n'est pas un nombre valide. Essaie encore.")
-            except asyncio
+            except asyncio.TimeoutError:
+                await ctx.send(f"Tu as mis trop de temps ! Le nombre était {number_to_guess}.")
+                return
+        
+        await ctx.send(f"Tu as épuisé toutes tes tentatives. Le nombre était {number_to_guess}.")
+
+# Fonction setup pour charger le Cog
+async def setup(bot):
+    await bot.add_cog(Games(bot))
