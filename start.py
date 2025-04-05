@@ -20,6 +20,8 @@ class MonBot(commands.Bot):
 intents = discord.Intents.all()
 bot = MonBot(command_prefix='!', intents=intents)
 
+bot.remove_command('help')
+
 # Garde le bot en ligne
 keep_alive()
 
