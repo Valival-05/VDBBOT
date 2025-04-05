@@ -37,6 +37,7 @@ class Moderation(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+    # ✅ Slash command /moderate
     @app_commands.command(name="moderate", description="Afficher les options de modération pour un membre.")
     @app_commands.checks.has_permissions(administrator=True)
     async def moderate(self, interaction: discord.Interaction, member: discord.Member):
@@ -52,6 +53,13 @@ class Moderation(commands.Cog):
     async def moderate_error(self, interaction: discord.Interaction, error):
         if isinstance(error, app_commands.errors.MissingPermissions):
             await interaction.response.send_message("Tu dois être administrateur pour utiliser cette commande.", ephemeral=True)
+
+    # ✅ Commande !sync (admin only) pour forcer la sync des slash commands
+    @commands.command(name="sync")
+    @commands.has_permissions(administrator=True)
+    async def sync_commands(self, ctx):
+        synced = await self.bot.tree.sync()
+        await ctx.send(f"✅ {len(synced)} commandes slash synchronisées !")
 
 async def setup(bot):
     await bot.add_cog(Moderation(bot))
