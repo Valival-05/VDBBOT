@@ -4,6 +4,7 @@ import random
 import discord
 from discord.ext import commands
 import sys
+import asyncio
 from keep_alive import keep_alive
 
 load_dotenv()
@@ -17,6 +18,10 @@ async def on_ready():
     print(f'Bot connecté en tant que {bot.user.name} ({bot.user.id})')
     channel = bot.get_channel(1353147720864501764)  # Remplace par l'ID du canal
     await channel.send("🎉 Je suis maintenant en ligne et prêt à vous aider ! 🎉")
+    await asyncio.sleep(2)
+    await channel.send("Je suis en train de démarré ...")
+    await asyncio.sleep(3)
+    await channel.send("Les LOG ne sont pas encore disponible.")
 
 @bot.command(help="Affiche un mot nommé Pong !")
 async def Ping(ctx):
