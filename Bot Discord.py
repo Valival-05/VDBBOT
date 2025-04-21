@@ -15,7 +15,7 @@ bot = commands.Bot(command_prefix='/', intents=discord.Intents.default())
 @bot.event
 async def on_ready():
     print(f'Bot connecté en tant que {bot.user.name} ({bot.user.id})')
-    channel = bot.get_channel(1358037453427966024)  # Remplace par l'ID du canal
+    channel = bot.get_channel(1353147720864501764)  # Remplace par l'ID du canal
     await channel.send("🎉 Je suis maintenant en ligne et prêt à vous aider ! 🎉")
 
 @bot.command(help="Affiche un mot nommé Pong !")
