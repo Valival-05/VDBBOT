@@ -14,19 +14,22 @@ bot = commands.Bot(command_prefix='/', intents=discord.Intents.default())
 
 @bot.event
 async def on_ready():
-    print(f'Bot connecté en tant que {bot.user.name} ({bot.user.id})')
+    print(f"[DEBUG] Bot connecté en tant que {bot.user.name} ({bot.user.id})")
+
+    try:
+        channel = await bot.fetch_channel(1353147720864501764)
+        print(f"[DEBUG] Canal trouvé : {channel.name}")
+
+        await channel.send("🎉 Je suis maintenant en ligne et prêt à vous aider ! 🎉")
+        await asyncio.sleep(1)
+
+        await channel.send("Je suis en train de démarrer ...")
+        await asyncio.sleep(1)
+
+        await channel.send("Les LOG ne sont pas encore disponibles.")
     
-    # Utilise fetch_channel pour être sûr de l’avoir même si le cache est vide
-    channel = await bot.fetch_channel(1353147720864501764)
-    
-    await channel.send("🎉 Je suis maintenant en ligne et prêt à vous aider ! 🎉")
-    await asyncio.sleep(1)
-
-    await channel.send("Je suis en train de démarrer ...")
-    await asyncio.sleep(1)
-
-    await channel.send("Les LOG ne sont pas encore disponibles.")
-
+    except Exception as e:
+        print(f"[ERREUR] Impossible d'envoyer le message : {e}")
 
 @bot.command(help="Affiche un mot nommé Pong !")
 async def Ping(ctx):
