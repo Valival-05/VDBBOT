@@ -12,16 +12,21 @@ load_dotenv()
 token = os.getenv("DISCORD_TOKEN")
 bot = commands.Bot(command_prefix='/', intents=discord.Intents.default())
 
-# L'événement on_ready
 @bot.event
 async def on_ready():
     print(f'Bot connecté en tant que {bot.user.name} ({bot.user.id})')
-    channel = bot.get_channel(1353147720864501764)  # Remplace par l'ID du canal
+    
+    # Utilise fetch_channel pour être sûr de l’avoir même si le cache est vide
+    channel = await bot.fetch_channel(1353147720864501764)
+    
     await channel.send("🎉 Je suis maintenant en ligne et prêt à vous aider ! 🎉")
-    await asyncio.sleep(2)
-    await channel.send("Je suis en train de démarré ...")
-    await asyncio.sleep(3)
-    await channel.send("Les LOG ne sont pas encore disponible.")
+    await asyncio.sleep(1)
+
+    await channel.send("Je suis en train de démarrer ...")
+    await asyncio.sleep(1)
+
+    await channel.send("Les LOG ne sont pas encore disponibles.")
+
 
 @bot.command(help="Affiche un mot nommé Pong !")
 async def Ping(ctx):
