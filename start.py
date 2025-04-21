@@ -21,17 +21,18 @@ class MonBot(commands.Bot):
         print(f'Bot connecté en tant que {self.user}')
 
         statuses = [
-            discord.Game("Salut c'est moi !"),
-            discord.Activity(type=discord.ActivityType.watching, name="le code tourner"),
-            discord.Activity(type=discord.ActivityType.listening, name="les commandes")
+            discord.Game("GorillaTAG"),
+            discord.Activity(type=discord.ActivityType.watching, name="la description du BOT"),
+            discord.Activity(type=discord.ActivityType.listening, name="de la musique")
         ]
 
         async def status_cycle():
             while True:
                 for status in statuses:
                     print(f"[DEBUG] Changement de statut → {status.name}")
+                    print(f"[Serveur] Mise a Jour 👾")
                     await self.change_presence(status=discord.Status.idle, activity=status)
-                    await asyncio.sleep(10)
+                    await asyncio.sleep(5)
 
         self.loop.create_task(status_cycle())
 
@@ -54,10 +55,9 @@ async def help(ctx):
 
     # Liste des commandes et de leurs descriptions
     commands_list = {
-        'help': 'Affiche ce message d\'aide.',
-        'ping': 'Vérifie la latence du bot.',
-        'game': 'Lance un jeu de devinette de nombre.',
-        'kick': 'Expulse un membre du serveur.',
+        '!help': 'Affiche ce message d\'aide.',
+        '/game': 'Vérifie la latence du bot.',
+        '/game': 'Lance un jeu de devinette de nombre.',
         # Ajoute ici les autres commandes et leurs descriptions
     }
 
