@@ -32,7 +32,7 @@ class MonBot(commands.Bot):
                 await self.change_presence(status=discord.Status.idle, activity=status)
                 await asyncio.sleep(10)  # Change toutes les 10 secondes (tu peux modifier)
 
-    self.loop.create_task(status_cycle())
+        self.loop.create_task(status_cycle())
 
 # Création du bot avec les intents et sans la commande d'aide par défaut
 intents = discord.Intents.all()
