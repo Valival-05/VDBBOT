@@ -19,20 +19,22 @@ class MonBot(commands.Bot):
 
     async def on_ready(self):
         print(f'Bot connecté en tant que {self.user}')
-    
+
         statuses = [
             discord.Game("Salut c'est moi !"),
             discord.Activity(type=discord.ActivityType.watching, name="le code tourner"),
             discord.Activity(type=discord.ActivityType.listening, name="les commandes")
         ]
 
-    async def status_cycle():
-        while True:
-            for status in statuses:
-                await self.change_presence(status=discord.Status.idle, activity=status)
-                await asyncio.sleep(10)  # Change toutes les 10 secondes (tu peux modifier)
+        async def status_cycle():
+            while True:
+                for status in statuses:
+                    print(f"[DEBUG] Changement de statut → {status.name}")
+                    await self.change_presence(status=discord.Status.idle, activity=status)
+                    await asyncio.sleep(10)
 
         self.loop.create_task(status_cycle())
+
 
 # Création du bot avec les intents et sans la commande d'aide par défaut
 intents = discord.Intents.all()
