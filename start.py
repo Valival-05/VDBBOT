@@ -18,8 +18,20 @@ class MonBot(commands.Bot):
         await self.tree.sync()
 
     async def on_ready(self):
-        print(f'Bot connecté en tant que {self.user}')
+        print(f'✅ Bot connecté en tant que {self.user}')
 
+        # --- Envoi de messages dans un canal au démarrage ---
+        try:
+            channel = await self.fetch_channel(1353147720864501764)  # Remplace par ton ID de canal
+            await channel.send("🎉 Le bot est en ligne et prêt à l’action !")
+            await asyncio.sleep(1)
+            await channel.send("⏳ Initialisation en cours...")
+            await asyncio.sleep(1)
+            await channel.send("✅ Tous les systèmes sont opérationnels.")
+        except Exception as e:
+            print(f"[ERREUR] Impossible d'envoyer les messages initiaux : {e}")
+
+        # --- Rotation des statuts ---
         statuses = [
             discord.Game("GorillaTAG"),
             discord.Activity(type=discord.ActivityType.watching, name="la description du BOT"),
@@ -30,12 +42,10 @@ class MonBot(commands.Bot):
             while True:
                 for status in statuses:
                     print(f"[DEBUG] Changement de statut → {status.name}")
-                    print(f"[Serveur] Mise a Jour 👾")
                     await self.change_presence(status=discord.Status.idle, activity=status)
                     await asyncio.sleep(5)
 
         self.loop.create_task(status_cycle())
-
 
 # Création du bot avec les intents et sans la commande d'aide par défaut
 intents = discord.Intents.all()
