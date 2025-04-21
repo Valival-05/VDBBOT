@@ -20,11 +20,11 @@ class MonBot(commands.Bot):
     async def on_ready(self):
         print(f'Bot connecté en tant que {self.user}')
     
-    statuses = [
-        discord.Game("Salut c'est moi !"),
-        discord.Activity(type=discord.ActivityType.watching, name="le code tourner"),
-        discord.Activity(type=discord.ActivityType.listening, name="les commandes")
-    ]
+        statuses = [
+            discord.Game("Salut c'est moi !"),
+            discord.Activity(type=discord.ActivityType.watching, name="le code tourner"),
+            discord.Activity(type=discord.ActivityType.listening, name="les commandes")
+        ]
 
     async def status_cycle():
         while True:
