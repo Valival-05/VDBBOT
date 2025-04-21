@@ -1,4 +1,5 @@
 import os
+import asyncio
 from dotenv import load_dotenv
 import discord
 from discord.ext import commands
@@ -17,8 +18,21 @@ class MonBot(commands.Bot):
         await self.tree.sync()
 
     async def on_ready(self):
-        await self.change_presence(status=discord.Status.idle, activity=discord.Game('vous regardé'))
-        print(f'Bot connecté en tant que {self.user}')
+    print(f'Bot connecté en tant que {self.user}')
+    
+    statuses = [
+        discord.Game("Salut c'est moi !"),
+        discord.Activity(type=discord.ActivityType.watching, name="le code tourner"),
+        discord.Activity(type=discord.ActivityType.listening, name="les commandes")
+    ]
+
+    async def status_cycle():
+        while True:
+            for status in statuses:
+                await self.change_presence(status=discord.Status.idle, activity=status)
+                await asyncio.sleep(10)  # Change toutes les 10 secondes (tu peux modifier)
+
+    self.loop.create_task(status_cycle())
 
 # Création du bot avec les intents et sans la commande d'aide par défaut
 intents = discord.Intents.all()
