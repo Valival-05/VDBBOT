@@ -7,10 +7,6 @@ from keep_alive import keep_alive
 load_dotenv()
 token = os.getenv('DISCORD_TOKEN')
 
-async def on_ready():
-    await client.change_presence(status=discord.status.idle, activity=discord.Game('Salut c'est moi !'))
-    print('bot ready')
-
 class MonBot(commands.Bot):
     async def setup_hook(self):
         # Charge les extensions (cogs)
