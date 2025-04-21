@@ -17,6 +17,7 @@ class MonBot(commands.Bot):
         await self.tree.sync()
 
     async def on_ready(self):
+        await self.change_presence(status=discord.Status.idle, activity=discord.Game('vous regardé'))
         print(f'Bot connecté en tant que {self.user}')
 
 # Création du bot avec les intents et sans la commande d'aide par défaut
