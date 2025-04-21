@@ -18,7 +18,7 @@ class MonBot(commands.Bot):
         await self.tree.sync()
 
     async def on_ready(self):
-    print(f'Bot connecté en tant que {self.user}')
+        print(f'Bot connecté en tant que {self.user}')
     
     statuses = [
         discord.Game("Salut c'est moi !"),
