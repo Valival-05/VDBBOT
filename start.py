@@ -45,7 +45,7 @@ class MonBot(commands.Bot):
                 for status in statuses:
                     print(f"[DEBUG] Changement de statut → {status.name}")
                     await self.change_presence(status=discord.Status.idle, activity=status)
-                    await asyncio.sleep(0.5)
+                    await asyncio.sleep(10)
 
         self.loop.create_task(status_cycle())
 
