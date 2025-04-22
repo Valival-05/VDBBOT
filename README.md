@@ -1,4 +1,4 @@
-# 🤖 Bot Discord - NomDuBot
+# 🤖 Bot Discord - VDBBOT
 
 Un bot Discord écrit en Python avec la bibliothèque. Il est conçu pour automatiser certaines tâches, modérer un serveur, ou ajouter un peu de fun à vos communautés !
 
@@ -8,11 +8,8 @@ Un bot Discord écrit en Python avec la bibliothèque. Il est conçu pour automa
 
 - [🔧 Fonctionnalités](#-fonctionnalités)
 - [📦 Installation](#-installation)
-- [⚙️ Configuration](#️-configuration)
-- [🚀 Lancer le bot](#-lancer-le-bot)
-- [🧠 Commandes](#-commandes)
-- [🤝 Contribuer](#-contribuer)
-- [📄 Licence](#-licence)
+- [⚙️ Configuration](#-configuration)
+- [💾 OpenSource](#-OpenSource)
 
 ---
 
@@ -32,3 +29,15 @@ Un bot Discord écrit en Python avec la bibliothèque. Il est conçu pour automa
 
 - Python 3.8 ou plus récent
 - Un compte Discord avec un serveur où tester le bot
+
+---
+
+## ⚙️ Configuration
+
+- Non disponible
+
+---
+
+## 💾 OpenSource
+
+- Se BOT est entierement Open source et mis a jour tres fréquament
