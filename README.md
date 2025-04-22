@@ -8,7 +8,7 @@ Un bot Discord écrit en Python avec la bibliothèque. Il est conçu pour automa
 
 - [🔧 Fonctionnalités](#-fonctionnalités)
 - [📦 Installation](#-installation)
-- [⚙️ Configuration](# -configuration)
+- [⚙️ Configuration](#-configuration)
 - [💾 OpenSource](#-OpenSource)
 
 ---
