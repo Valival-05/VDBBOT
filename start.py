@@ -26,8 +26,10 @@ class MonBot(commands.Bot):
             await channel.send("🎉 Le bot est en ligne et prêt à l’action !")
             await asyncio.sleep(1)
             await channel.send("⏳ Initialisation en cours...")
-            await asyncio.sleep(1)
+            await asyncio.sleep(3)
             await channel.send("✅ Tous les systèmes sont opérationnels.")
+            await asyncio.sleep(7)
+            await channel.send("❌ Non ce message n'est pas generer par IA")
         except Exception as e:
             print(f"[ERREUR] Impossible d'envoyer les messages initiaux : {e}")
 
@@ -43,13 +45,13 @@ class MonBot(commands.Bot):
                 for status in statuses:
                     print(f"[DEBUG] Changement de statut → {status.name}")
                     await self.change_presence(status=discord.Status.idle, activity=status)
-                    await asyncio.sleep(5)
+                    await asyncio.sleep(0.5)
 
         self.loop.create_task(status_cycle())
 
 # Création du bot avec les intents et sans la commande d'aide par défaut
 intents = discord.Intents.all()
-bot = MonBot(command_prefix='!', intents=intents, help_command=None)
+bot = MonBot(command_prefix='/', intents=intents, help_command=None)
 
 # Suppression de la commande d'aide par défaut
 bot.remove_command('help')
@@ -65,15 +67,14 @@ async def help(ctx):
 
     # Liste des commandes et de leurs descriptions
     commands_list = {
-        '!help': 'Affiche ce message d\'aide.',
-        '/game': 'Vérifie la latence du bot.',
-        '/game': 'Lance un jeu de devinette de nombre.',
+        'help': 'Affiche ce message d\'aide.',
+        'game': 'Lance un jeu de devinette de nombre.',
         # Ajoute ici les autres commandes et leurs descriptions
     }
 
     for command_name, command_desc in commands_list.items():
         embed.add_field(
-            name=f'!{command_name}',
+            name=f'/{command_name}',
             value=command_desc,
             inline=False
         )
