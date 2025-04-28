@@ -11,7 +11,7 @@ token = os.getenv('DISCORD_TOKEN')
 class MonBot(commands.Bot):
     async def setup_hook(self):
         # Charge les extensions (cogs)
-        for extension in ['games', 'moderation']:
+        for extension in ['games', 'moderation', 'ticket']:
             await self.load_extension(f'cogs.{extension}')
         
         # Synchronisation des commandes slash après avoir chargé les cogs
@@ -80,8 +80,6 @@ async def help(ctx):
         )
 
     await ctx.send(embed=embed)
-
-bot.add_view(TicketView())
 
 # Garde le bot en ligne
 keep_alive()
