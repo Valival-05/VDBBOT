@@ -23,8 +23,8 @@ class MonBot(commands.Bot):
         # Synchronisation manuelle à chaque démarrage
         await self.tree.sync()
 
-        # Vérifie si les commandes slash sont bien synchronisées
-        print(f"Slash commands synchronisées: {self.tree.commands}")
+        commands_synced = await self.tree.fetch_commands()
+        print(f"✅ Slash commands synchronisées ({len(commands_synced)} commandes)")
         
         # --- Envoi de messages dans un canal au démarrage ---
         try:
