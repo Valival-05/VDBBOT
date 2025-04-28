@@ -20,6 +20,12 @@ class MonBot(commands.Bot):
     async def on_ready(self):
         print(f'✅ Bot connecté en tant que {self.user}')
 
+        # Synchronisation manuelle à chaque démarrage
+        await self.tree.sync()
+
+        # Vérifie si les commandes slash sont bien synchronisées
+        print(f"Slash commands synchronisées: {self.tree.commands}")
+        
         # --- Envoi de messages dans un canal au démarrage ---
         try:
             channel = await self.fetch_channel(1353147720864501764)  # Remplace par ton ID de canal
