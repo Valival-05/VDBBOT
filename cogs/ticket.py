@@ -14,13 +14,12 @@ class TicketView(discord.ui.View):
         guild = interaction.guild
         user = interaction.user
 
-        # Vérifie si l'utilisateur a déjà un ticket
         existing_channel = discord.utils.get(guild.text_channels, name=f"ticket-{user.id}")
         if existing_channel:
-            await interaction.response.send_message(f"🚫 Tu as déjà un ticket ici : {existing_channel.mention}", ephemeral=True)
+            await interaction.response.send_message(
+                f"🚫 Tu as déjà un ticket ici : {existing_channel.mention}", ephemeral=True)
             return
 
-        # Permissions : user + modérateur
         overwrites = {
             guild.default_role: discord.PermissionOverwrite(read_messages=False),
             user: discord.PermissionOverwrite(read_messages=True, send_messages=True),
@@ -30,12 +29,12 @@ class TicketView(discord.ui.View):
 
         ticket_channel = await guild.create_text_channel(f"ticket-{user.id}", overwrites=overwrites)
 
-        await ticket_channel.send(f"{self.ping_role.mention} {user.mention} merci d'avoir ouvert un ticket ! Le staff arrivera bientôt.")
-
+        await ticket_channel.send(
+            f"{self.ping_role.mention} {user.mention} merci d'avoir ouvert un ticket ! Le staff arrivera bientôt.")
         await interaction.response.send_message(f"✅ Ticket créé : {ticket_channel.mention}", ephemeral=True)
 
-        # Ajouter un bouton "Fermer le ticket"
         await ticket_channel.send(view=CloseTicketView())
+
 
 class CloseTicketView(discord.ui.View):
     def __init__(self):
@@ -47,6 +46,7 @@ class CloseTicketView(discord.ui.View):
         await asyncio.sleep(5)
         await interaction.channel.delete()
 
+
 class TicketCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -54,19 +54,22 @@ class TicketCog(commands.Cog):
     @app_commands.command(name="setup_ticket", description="Configurer le système de tickets")
     @app_commands.checks.has_permissions(administrator=True)
     async def setup_ticket(self, interaction: discord.Interaction):
-        await interaction.response.send_message("Veuillez choisir le salon où envoyer le système de tickets :", ephemeral=True, view=SalonSelector(self.bot))
+        await interaction.response.send_message("📢 Choisissez un salon pour configurer le système de tickets :", ephemeral=True)
+        await interaction.followup.send(view=SalonSelector(self.bot, interaction))
+
 
     @setup_ticket.error
     async def setup_ticket_error(self, interaction: discord.Interaction, error):
         if isinstance(error, app_commands.errors.MissingPermissions):
             await interaction.response.send_message("🚫 Tu n'as pas la permission d'utiliser cette commande.", ephemeral=True)
 
+
 class SalonSelector(discord.ui.View):
-    def __init__(self, bot):
+    def __init__(self, bot, interaction):
         super().__init__(timeout=60)
         self.bot = bot
+        self.initial_interaction = interaction
 
-        # Crée dynamiquement les salons dans un select menu
         options = []
         for channel in bot.get_all_channels():
             if isinstance(channel, discord.TextChannel):
@@ -77,47 +80,54 @@ class SalonSelector(discord.ui.View):
                         description="Salon texte"
                     )
                 )
-        
+
         self.select_menu = discord.ui.Select(
-            placeholder="📢 Choisissez un salon",
+            placeholder="📢 Sélectionne un salon",
             options=options,
             min_values=1,
             max_values=1
         )
-        self.select_menu.callback = self.select_channel  # Associe la fonction callback
+        self.select_menu.callback = self.select_channel
         self.add_item(self.select_menu)
 
     async def select_channel(self, interaction: discord.Interaction):
-        # Quand l'admin choisit un salon
         selected_channel_id = int(self.select_menu.values[0])
         selected_channel = interaction.guild.get_channel(selected_channel_id)
-        
+
         await interaction.response.send_message(
-            "Merci ! Maintenant, mentionnez le **rôle modérateur** (ex: @modo) :", ephemeral=True
-        )
+            "✅ Salon sélectionné.\nVeuillez maintenant **mentionner** le **rôle modérateur** dans ce salon.", ephemeral=True)
 
         def check(m):
             return m.author.id == interaction.user.id and m.channel.id == interaction.channel.id
 
         try:
             msg = await self.bot.wait_for("message", timeout=60.0, check=check)
+
+            if not msg.role_mentions:
+                await interaction.followup.send("⚠️ Aucun rôle mentionné. Relance la commande.", ephemeral=True)
+                return
+
             moderator_role = msg.role_mentions[0]
 
             await interaction.followup.send(
-                "Super ! Maintenant, mentionnez le **rôle à ping** lors de l'ouverture d'un ticket :", ephemeral=True
-            )
+                "✅ Super ! Maintenant, mentionnez le **rôle à ping** lorsqu'un ticket est ouvert :", ephemeral=True)
 
             msg2 = await self.bot.wait_for("message", timeout=60.0, check=check)
+
+            if not msg2.role_mentions:
+                await interaction.followup.send("⚠️ Aucun rôle mentionné. Relance la commande.", ephemeral=True)
+                return
+
             ping_role = msg2.role_mentions[0]
 
             embed = discord.Embed(
                 title="🎫 Ouvre un ticket",
-                description="Clique sur le bouton ci-dessous pour créer ton ticket !",
+                description="Clique sur le bouton ci-dessous pour créer un ticket !",
                 color=discord.Color.blurple()
             )
 
             await selected_channel.send(embed=embed, view=TicketView(moderator_role, ping_role))
-            await interaction.followup.send("✅ Système de tickets configuré avec succès !", ephemeral=True)
+            await interaction.followup.send("✅ Système de ticket configuré avec succès !", ephemeral=True)
 
         except asyncio.TimeoutError:
             await interaction.followup.send("⏳ Temps écoulé. Merci de relancer la commande.", ephemeral=True)
