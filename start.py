@@ -81,6 +81,8 @@ async def help(ctx):
 
     await ctx.send(embed=embed)
 
+bot.add_view(TicketView())
+
 # Garde le bot en ligne
 keep_alive()
 
