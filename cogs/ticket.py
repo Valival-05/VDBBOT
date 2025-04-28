@@ -66,25 +66,45 @@ class SalonSelector(discord.ui.View):
         super().__init__(timeout=60)
         self.bot = bot
 
-    @discord.ui.select(placeholder="📢 Choisissez un salon", select_type=discord.ComponentType.select, options=[])
-    async def select_channel(self, interaction: discord.Interaction, select: discord.ui.Select):
-        # Choisir salon + demander rôles
-        channel_id = int(select.values[0])
-        self.selected_channel = interaction.guild.get_channel(channel_id)
+        # Crée dynamiquement les salons dans un select menu
+        options = []
+        for channel in bot.get_all_channels():
+            if isinstance(channel, discord.TextChannel):
+                options.append(
+                    discord.SelectOption(
+                        label=channel.name,
+                        value=str(channel.id),
+                        description="Salon texte"
+                    )
+                )
+        
+        self.select_menu = discord.ui.Select(
+            placeholder="📢 Choisissez un salon",
+            options=options,
+            min_values=1,
+            max_values=1
+        )
+        self.select_menu.callback = self.select_channel  # Associe la fonction callback
+        self.add_item(self.select_menu)
 
+    async def select_channel(self, interaction: discord.Interaction):
+        # Quand l'admin choisit un salon
+        selected_channel_id = int(self.select_menu.values[0])
+        selected_channel = interaction.guild.get_channel(selected_channel_id)
+        
         await interaction.response.send_message(
-            "Merci ! Maintenant, mentionne le **rôle modérateur** (ex: @modo) :", ephemeral=True
+            "Merci ! Maintenant, mentionnez le **rôle modérateur** (ex: @modo) :", ephemeral=True
         )
 
         def check(m):
-            return m.author == interaction.user and m.channel == interaction.channel
+            return m.author.id == interaction.user.id and m.channel.id == interaction.channel.id
 
         try:
             msg = await self.bot.wait_for("message", timeout=60.0, check=check)
             moderator_role = msg.role_mentions[0]
 
             await interaction.followup.send(
-                "Super ! Maintenant mentionne le **rôle à ping** lors de l'ouverture d'un ticket :", ephemeral=True
+                "Super ! Maintenant, mentionnez le **rôle à ping** lors de l'ouverture d'un ticket :", ephemeral=True
             )
 
             msg2 = await self.bot.wait_for("message", timeout=60.0, check=check)
@@ -96,7 +116,7 @@ class SalonSelector(discord.ui.View):
                 color=discord.Color.blurple()
             )
 
-            await self.selected_channel.send(embed=embed, view=TicketView(moderator_role, ping_role))
+            await selected_channel.send(embed=embed, view=TicketView(moderator_role, ping_role))
             await interaction.followup.send("✅ Système de tickets configuré avec succès !", ephemeral=True)
 
         except asyncio.TimeoutError:
