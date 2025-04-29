@@ -1,7 +1,17 @@
 import discord
 from discord.ext import commands
 from discord.ui import Button, View
-from discord import Embed
+import os
+from dotenv import load_dotenv
+
+# Charger le token à partir du fichier .env
+load_dotenv()
+TOKEN = os.getenv("DISCORD_TOKEN")
+
+intents = discord.Intents.default()
+intents.message_content = True  # Nécessaire pour lire le contenu des messages
+
+bot = commands.Bot(command_prefix="!", intents=intents)
 
 class TicketView(View):
     def __init__(self):
@@ -29,27 +39,26 @@ class TicketView(View):
         # Avertir l'utilisateur que le ticket a été ouvert
         await interaction.response.send_message(f"Ticket ouvert dans {ticket_channel.mention}.", ephemeral=True)
 
-class TicketCog(commands.Cog):
-    def __init__(self, bot):
-        self.bot = bot
+@bot.event
+async def on_ready():
+    print(f"{bot.user} est connecté et prêt à l'emploi !")
 
-    @commands.command()
-    async def ticket(self, ctx):
-        # Vérifier si l'utilisateur est un administrateur
-        if not any(role.name == "Admin" for role in ctx.author.roles):
-            await ctx.send("Désolé, vous devez être un administrateur pour utiliser cette commande.")
-            return
+@bot.command()
+async def ticket(ctx):
+    # Vérifier si l'utilisateur est un administrateur
+    if not any(role.name == "Admin" for role in ctx.author.roles):
+        await ctx.send("Désolé, vous devez être un administrateur pour utiliser cette commande.")
+        return
 
-        # Créer la vue et le bouton
-        view = TicketView()
+    # Créer la vue et le bouton
+    view = TicketView()
 
-        # Envoyer un message embed avec le bouton
-        embed = Embed(
-            title="Système de Ticket",
-            description="Cliquez sur le bouton ci-dessous pour ouvrir un ticket. Un membre de notre équipe vous assistera.",
-            color=discord.Color.blue()
-        )
-        await ctx.send(embed=embed, view=view)
+    # Envoyer un message embed avec le bouton
+    embed = discord.Embed(
+        title="Système de Ticket",
+        description="Cliquez sur le bouton ci-dessous pour ouvrir un ticket. Un membre de notre équipe vous assistera.",
+        color=discord.Color.blue()
+    )
+    await ctx.send(embed=embed, view=view)
 
-async def setup(bot):
-    await bot.add_cog(TicketCog(bot))
+bot.run(TOKEN)
