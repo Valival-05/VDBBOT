@@ -16,8 +16,7 @@ class TicketView(discord.ui.View):
 
         existing_channel = discord.utils.get(guild.text_channels, name=f"ticket-{user.id}")
         if existing_channel:
-            await interaction.response.send_message(
-                f"🚫 Tu as déjà un ticket ici : {existing_channel.mention}", ephemeral=True)
+            await interaction.response.send_message(f"🚫 Tu as déjà un ticket ici : {existing_channel.mention}", ephemeral=True)
             return
 
         overwrites = {
@@ -29,12 +28,9 @@ class TicketView(discord.ui.View):
 
         ticket_channel = await guild.create_text_channel(f"ticket-{user.id}", overwrites=overwrites)
 
-        await ticket_channel.send(
-            f"{self.ping_role.mention} {user.mention} merci d'avoir ouvert un ticket ! Le staff arrivera bientôt.")
+        await ticket_channel.send(f"{self.ping_role.mention} {user.mention} merci d'avoir ouvert un ticket ! Le staff arrivera bientôt.")
         await interaction.response.send_message(f"✅ Ticket créé : {ticket_channel.mention}", ephemeral=True)
-
         await ticket_channel.send(view=CloseTicketView())
-
 
 class CloseTicketView(discord.ui.View):
     def __init__(self):
@@ -46,29 +42,11 @@ class CloseTicketView(discord.ui.View):
         await asyncio.sleep(5)
         await interaction.channel.delete()
 
-
-class TicketCog(commands.Cog):
-    def __init__(self, bot):
-        self.bot = bot
-
-    @app_commands.command(name="setup_ticket", description="Configurer le système de tickets")
-    @app_commands.checks.has_permissions(administrator=True)
-    async def setup_ticket(self, interaction: discord.Interaction):
-        await interaction.response.send_message("📢 Choisissez un salon pour configurer le système de tickets :", ephemeral=True)
-        await interaction.followup.send(view=SalonSelector(self.bot, interaction))
-
-
-    @setup_ticket.error
-    async def setup_ticket_error(self, interaction: discord.Interaction, error):
-        if isinstance(error, app_commands.errors.MissingPermissions):
-            await interaction.response.send_message("🚫 Tu n'as pas la permission d'utiliser cette commande.", ephemeral=True)
-
-
 class SalonSelector(discord.ui.View):
-    def __init__(self, bot, interaction):
+    def __init__(self, bot, interaction_user):
         super().__init__(timeout=60)
         self.bot = bot
-        self.initial_interaction = interaction
+        self.interaction_user = interaction_user
 
         options = []
         for channel in bot.get_all_channels():
@@ -81,56 +59,62 @@ class SalonSelector(discord.ui.View):
                     )
                 )
 
-        self.select_menu = discord.ui.Select(
-            placeholder="📢 Sélectionne un salon",
+        select = discord.ui.Select(
+            placeholder="📢 Choisissez un salon",
             options=options,
             min_values=1,
             max_values=1
         )
-        self.select_menu.callback = self.select_channel
-        self.add_item(self.select_menu)
+        select.callback = self.select_channel
+        self.add_item(select)
 
     async def select_channel(self, interaction: discord.Interaction):
-        selected_channel_id = int(self.select_menu.values[0])
+        if interaction.user != self.interaction_user:
+            await interaction.response.send_message("🚫 Seul l'utilisateur ayant lancé la commande peut faire ça.", ephemeral=True)
+            return
+
+        selected_channel_id = int(interaction.data["values"][0])
         selected_channel = interaction.guild.get_channel(selected_channel_id)
 
-        await interaction.response.send_message(
-            "✅ Salon sélectionné.\nVeuillez maintenant **mentionner** le **rôle modérateur** dans ce salon.", ephemeral=True)
+        await interaction.response.send_message("Mentionne maintenant le **rôle modérateur** (ex: @modérateur) :", ephemeral=True)
 
         def check(m):
             return m.author.id == interaction.user.id and m.channel.id == interaction.channel.id
 
         try:
             msg = await self.bot.wait_for("message", timeout=60.0, check=check)
-
-            if not msg.role_mentions:
-                await interaction.followup.send("⚠️ Aucun rôle mentionné. Relance la commande.", ephemeral=True)
-                return
-
             moderator_role = msg.role_mentions[0]
 
-            await interaction.followup.send(
-                "✅ Super ! Maintenant, mentionnez le **rôle à ping** lorsqu'un ticket est ouvert :", ephemeral=True)
-
+            await interaction.followup.send("Et maintenant, mentionne le **rôle à ping** quand un ticket s'ouvre :", ephemeral=True)
             msg2 = await self.bot.wait_for("message", timeout=60.0, check=check)
-
-            if not msg2.role_mentions:
-                await interaction.followup.send("⚠️ Aucun rôle mentionné. Relance la commande.", ephemeral=True)
-                return
-
             ping_role = msg2.role_mentions[0]
 
             embed = discord.Embed(
                 title="🎫 Ouvre un ticket",
-                description="Clique sur le bouton ci-dessous pour créer un ticket !",
+                description="Clique sur le bouton ci-dessous pour créer ton ticket !",
                 color=discord.Color.blurple()
             )
 
             await selected_channel.send(embed=embed, view=TicketView(moderator_role, ping_role))
-            await interaction.followup.send("✅ Système de ticket configuré avec succès !", ephemeral=True)
+            await interaction.followup.send("✅ Système de tickets configuré avec succès !", ephemeral=True)
 
         except asyncio.TimeoutError:
             await interaction.followup.send("⏳ Temps écoulé. Merci de relancer la commande.", ephemeral=True)
+
+class TicketCog(commands.Cog):
+    def __init__(self, bot):
+        self.bot = bot
+
+    @app_commands.command(name="setup_ticket", description="Configurer le système de tickets")
+    @app_commands.checks.has_permissions(administrator=True)
+    async def setup_ticket(self, interaction: discord.Interaction):
+        await interaction.response.send_message("📢 Choisissez un salon pour configurer le système de tickets :", ephemeral=True)
+        await interaction.channel.send(view=SalonSelector(self.bot, interaction.user))
+
+    @setup_ticket.error
+    async def setup_ticket_error(self, interaction: discord.Interaction, error):
+        if isinstance(error, app_commands.errors.MissingPermissions):
+            await interaction.response.send_message("🚫 Tu n'as pas la permission d’utiliser cette commande.", ephemeral=True)
 
 async def setup(bot):
     await bot.add_cog(TicketCog(bot))
