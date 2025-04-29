@@ -67,7 +67,7 @@ async def help(ctx):
     """Affiche la liste des commandes disponibles"""
     embed = discord.Embed(
         title="Commandes Disponibles",
-        description="Voici la liste des commandes que je peux exécuter :",
+        description="Voici la liste des commandes que je peux exécuter (En devloppement ⚠️ ...):",
         color=discord.Color.blue()
     )
 
@@ -75,6 +75,7 @@ async def help(ctx):
     commands_list = {
         'help': 'Affiche ce message d\'aide.',
         'game': 'Lance un jeu de devinette de nombre.',
+        'Setup_ticket': 'Permet de setup le systeme de ticket. En devloppement ⚠️',
         # Ajoute ici les autres commandes et leurs descriptions
     }
 
