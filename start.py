@@ -41,7 +41,7 @@ class MonBot(commands.Bot):
 
         # --- Rotation des statuts ---
         statuses = [
-            discord.Game("GorillaTAG"),
+            discord.game("Dev")
             discord.Activity(type=discord.ActivityType.watching, name="la description du BOT"),
             discord.Activity(type=discord.ActivityType.listening, name="de la musique")
         ]
