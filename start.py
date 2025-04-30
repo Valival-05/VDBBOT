@@ -22,24 +22,28 @@ class MonBot(commands.Bot):
 
         # Synchronisation manuelle à chaque démarrage
         await self.tree.sync()
-
         commands_synced = await self.tree.fetch_commands()
         print(f"✅ Slash commands synchronisées ({len(commands_synced)} commandes)")
         
-        # --- Envoi de messages dans un canal au démarrage ---
-        try:
-            channel = await self.fetch_channel(1353147720864501764)  # Remplace par ton ID de canal n°1
-            channel = await self.fetch_channel(1364669476544712791)  # Remplace par ton ID de canal n°2
-            channel = await self.fetch_channel(1355857690852724837)  # Remplace par ton ID de canal n°3
-            await channel.send("🎉 Le bot est en ligne et prêt à l’action !")
-            await asyncio.sleep(1)
-            await channel.send("⏳ Initialisation en cours...")
-            await asyncio.sleep(3)
-            await channel.send("✅ Tous les systèmes sont opérationnels.")
-            await asyncio.sleep(7)
-            await channel.send("❌ Non ce message n'est pas generer par IA")
-        except Exception as e:
-            print(f"[ERREUR] Impossible d'envoyer les messages initiaux : {e}")
+        # --- Envoi de messages dans plusieurs canaux ---
+        channel_ids = [
+            1353147720864501764,  # ID canal 1
+            1364669476544712791,  # ID canal 2
+            1355857690852724837   # ID canal 3
+        ]
+
+        for channel_id in channel_ids:
+            try:
+                channel = await self.fetch_channel(channel_id)
+                await channel.send("🎉 Le bot est en ligne et prêt à l’action !")
+                await asyncio.sleep(1)
+                await channel.send("⏳ Initialisation en cours...")
+                await asyncio.sleep(3)
+                await channel.send("✅ Tous les systèmes sont opérationnels.")
+                await asyncio.sleep(7)
+                await channel.send("❌ Non ce message n'est pas généré par IA")
+            except Exception as e:
+                print(f"[ERREUR] Envoi échoué dans le salon {channel_id} : {e}")
 
         # --- Rotation des statuts ---
         statuses = [
@@ -69,7 +73,7 @@ async def help(ctx):
     """Affiche la liste des commandes disponibles"""
     embed = discord.Embed(
         title="Commandes Disponibles",
-        description="Voici la liste des commandes que je peux exécuter (En devloppement ⚠️ ...):",
+        description="Voici la liste des commandes que je peux exécuter (En développement ⚠️ ...):",
         color=discord.Color.blue()
     )
 
@@ -77,8 +81,7 @@ async def help(ctx):
     commands_list = {
         'help': 'Affiche ce message d\'aide.',
         'game': 'Lance un jeu de devinette de nombre.',
-        'Setup_ticket': 'Permet de setup le systeme de ticket. En devloppement ⚠️',
-        # Ajoute ici les autres commandes et leurs descriptions
+        'Setup_ticket': 'Permet de setup le système de ticket. En développement ⚠️',
     }
 
     for command_name, command_desc in commands_list.items():
