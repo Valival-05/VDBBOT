@@ -28,7 +28,9 @@ class MonBot(commands.Bot):
         
         # --- Envoi de messages dans un canal au démarrage ---
         try:
-            channel = await self.fetch_channel(1353147720864501764, 1364669476544712791)  # Remplace par ton ID de canal
+            channel = await self.fetch_channel(1353147720864501764)  # Remplace par ton ID de canal n°1
+            channel = await self.fetch_channel(1364669476544712791)  # Remplace par ton ID de canal n°2
+            channel = await self.fetch_channel(1355857690852724837)  # Remplace par ton ID de canal n°3
             await channel.send("🎉 Le bot est en ligne et prêt à l’action !")
             await asyncio.sleep(1)
             await channel.send("⏳ Initialisation en cours...")
