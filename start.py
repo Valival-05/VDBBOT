@@ -49,6 +49,7 @@ class MonBot(commands.Bot):
         statuses = [
             discord.Game("Dev"),
             discord.Activity(type=discord.ActivityType.watching, name="la description du BOT"),
+            discord.Activity(type=discord.ActivityType.watching, name="Le discord Officiel"),
             discord.Activity(type=discord.ActivityType.listening, name="de la musique")
         ]
 
