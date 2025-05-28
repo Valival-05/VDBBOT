@@ -5,7 +5,7 @@ from discord.ext import commands
 TOKEN = 'DISCORD_TOKEN'
 
 intents = discord.Intents.default()
-intents.message_content = True  # Nécessaire pour lire le contenu des messages
+intents.message_content = True
 
 bot = commands.Bot(command_prefix='!', intents=intents)
 
@@ -15,8 +15,12 @@ class MessageCommands(commands.Cog):
 
     @commands.command(name='envoyer')
     async def envoyer(self, ctx, *, message: str):
-        """Commande simple pour envoyer un message."""
-        await ctx.send(message)
+        """Envoie un message dans un embed violet."""
+        embed = discord.Embed(
+            description=message,
+            color=discord.Color.purple()
+        )
+        await ctx.send(embed=embed)
 
 @bot.event
 async def on_ready():
